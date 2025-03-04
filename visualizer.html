@@ -13,19 +13,24 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
             border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
         #song-info {
             color: white;
             font-size: 18px;
             margin-top: 10px;
+            font-weight: bold;
         }
         #album-art {
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             border-radius: 10px;
+            display: block;
+            margin: 0 auto 10px auto;
         }
     </style>
 </head>
@@ -35,7 +40,7 @@
     </div>
     
     <div id="player-container">
-        <img id="album-art" src="" alt="Album Art">
+        <img id="album-art" src="default-artwork.jpg" alt="Album Art">
         <div id="song-info">Loading track...</div>
     </div>
     
@@ -85,13 +90,15 @@
         });
 
         function updateSongInfo() {
-            fetch("https://embed.radio.co/embed/s9bf75234f/song.js")
+            fetch("https://public.radio.co/stations/s9bf75234f/status")
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("song-info").textContent = data.title;
-                    document.getElementById("album-art").src = data.artwork || "default-artwork.jpg";
+                    if (data.current_track) {
+                        document.getElementById("song-info").textContent = data.current_track.title;
+                        document.getElementById("album-art").src = data.current_track.artwork_url || "default-artwork.jpg";
+                    }
                 })
-                .catch(err => console.log("Error fetching song info", err));
+                .catch(err => console.error("Error fetching song info", err));
         }
         
         setInterval(updateSongInfo, 5000);
